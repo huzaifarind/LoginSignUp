@@ -13,6 +13,7 @@ namespace LoginSignUp.Controllers
             _logger = logger;
         }
 
+        [AuthorizeLoggedIn]
         public IActionResult Index()
         {
             return View();

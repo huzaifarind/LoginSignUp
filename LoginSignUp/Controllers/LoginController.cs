@@ -9,7 +9,6 @@ namespace LoginSignUp.Controllers
     {
         private readonly ILogger<LoginController> _logger;
         private readonly MyDbContext _dbContext;
-
         public LoginController(ILogger<LoginController> logger, MyDbContext dbContext)
         {
             _logger = logger;
@@ -23,7 +22,6 @@ namespace LoginSignUp.Controllers
             return View();
         }
 
-        // POST: /Login/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Login(string userName, string userPassword)
@@ -33,21 +31,30 @@ namespace LoginSignUp.Controllers
                 string message = _dbContext.LoginUser(userName, userPassword);
                 if (message == "Login successful.")
                 {
-                    // Set the username in ViewBag
-                    ViewBag.UserName = userName;
+                    // Store username in session
+                    HttpContext.Session.SetString("Username", userName);
 
-                    // Login successful
-                    return RedirectToAction("Index", "Home", new { message });
+                    // Redirect to Index action
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    // Login failed
                     ViewBag.Message = message;
                     return View();
                 }
             }
 
             return View();
+        }
+
+        // GET: /Login/Logout
+        public IActionResult Logout()
+        {
+            // Clear session data
+            HttpContext.Session.Clear();
+
+            // Redirect to Login action
+            return RedirectToAction("Login");
         }
 
 
